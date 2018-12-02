@@ -1,0 +1,7 @@
+Warning and error log from POTEN run:  01-Aug-2018 16:22:51
+
+  Warning: Multiple bodies using same IGDEF, GEOMXACT 
+
+           Check that gdf data is consistent. 
+
+  POTEN module run completed

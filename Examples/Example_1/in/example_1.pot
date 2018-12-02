@@ -1,0 +1,26 @@
+example_1.pot potential file
+24.75		 HBOT
+0       -1	 IRAD  IDIFF
+-101	 NPER
+0.0 0.02
+0	 NBETA
+6        NBODY
+example_1_1.gdf
+0	 0	 0	 0  XBODY(1-4)
+0	 0	 1	 0	 0	 0	 IMODE(1-6)
+example_1_2.gdf
+42.0375	 0	 0	 0  XBODY(1-4)
+0	 0	 1	 0	 0	 0	 IMODE(1-6)
+example_1_3.gdf
+84.0750  0	 0	 0  XBODY(1-4)
+0	 0	 1	 0	 0	 0	 IMODE(1-6)
+example_1_4.gdf
+126.1125 0	 0	 0  XBODY(1-4)
+0	 0	 1	 0	 0	 0	 IMODE(1-6)
+example_1_5.gdf
+168.1500 0	 0	 0  XBODY(1-4)
+0	 0	 1	 0	 0	 0	 IMODE(1-6)
+example_1_6.gdf
+210.1875 0	 0	 0  XBODY(1-4)
+0	 0	 1	 0	 0	 0	 IMODE(1-6)
+
