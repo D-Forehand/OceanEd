@@ -694,7 +694,7 @@ clear('ij_mode','i_mode','j_mode','i_between_1_and_6', ...
 % mode_index(9) = 2.
 
 % Calculating the number of degrees of freedom (number of modes):
-num_dofs=sqrt(size(inf_data,1));
+num_dofs=length(unique(inf_data(:,2)));
 
 % Calculating the 'mode' row vector:
 mode=(inf_data(1:num_dofs:end,2))';
