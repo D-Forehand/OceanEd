@@ -100,6 +100,7 @@ clear ('string')
 
 string{01}='Give  the  filename  of  the  WAMIT  FRC file';
 string{02}='number ';
+
 string{03}=', without the ".frc" extension:';
 string{04}='WAMIT  filenames   without   their  extension';
 string{05}='should  be  less  than  16  characters  long.';
@@ -107,7 +108,7 @@ string{06}='Please re-enter the filename:';
 string{07}=sprintf('%s\n%s\n%s\n\n',string{04},string{05},string{06});
 
 % Initialising the frc_filename cell array:
-frc_filename=cell(num_WAMIT_runs); 
+frc_filename=cell(num_WAMIT_runs,1);
 
 for file_count=1:num_WAMIT_runs
     string{08}=sprintf('\n%s\n%s%d%s\n\n',string{01},string{02}, ...
@@ -147,6 +148,20 @@ while length(optional_extension)>16
 end
 
 clear ('string')
+
+%% AMEND `frc_filename`: ADD PATH TO DIRECTORY CONTAINING WAMIT OUT FILES
+
+% Store name of current model
+model_name = frc_filename{1};
+
+% Define full path to TD model output `.mat` created at end of this script
+td_model_path= fullfile("..",'Models',frc_filename{1},'out-td_model');
+
+% Add full path to `frc_filename` cell array
+for file_count=1:num_WAMIT_runs
+    frc_filename{file_count} = fullfile("..",'Models',...
+        frc_filename{file_count},'out',frc_filename{file_count});
+end
 
 %% EXTRACT g, L AND rho FROM THE FIRST WAMIT ".OUT" FILE
 
@@ -1276,7 +1291,15 @@ reduced_stiffness_matrix=zeros(num_dofs,num_dofs);%Preallocating the array
 
 %% SAVING THE DATA FOR THE TIME-DOMAIN HYDRODYNAMIC ARRAY MODEL
 
-Matrices_and_SS_file=strcat(frc_filename{1},'_MassDampStiffMatsRadSS', ...
+% Create new folder for TD model in model sub-directory-> `out_td_model`
+if isempty(dir(td_model_path))
+    mkdir(td_model_path)
+end
+
+% Define full outpu `.mat` filename including path (excl extensions)
+td_model_filename = fullfile(td_model_path,model_name);
+
+Matrices_and_SS_file=strcat(td_model_filename,'_MassDampStiffMatsRadSS2', ...
     optional_extension,'.mat');
 save(Matrices_and_SS_file,'inv_reduced_mass_matrix', ...
                           'reduced_damping_matrix', ...
