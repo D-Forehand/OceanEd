@@ -97,28 +97,36 @@ num_WAMIT_runs=input(string{05});
 clear ('string')
 
 %% INPUT THE NAMES OF THE WAMIT FRC FILES
-
-string{01}='Give  the  filename  of  the  WAMIT  FRC file';
-string{02}='number ';
-
-string{03}=', without the ".frc" extension:';
-string{04}='WAMIT  filenames   without   their  extension';
-string{05}='should  be  less  than  16  characters  long.';
-string{06}='Please re-enter the filename:';
-string{07}=sprintf('%s\n%s\n%s\n\n',string{04},string{05},string{06});
+% Model selector implementation from local model library (`Model` folder)
 
 % Initialising the frc_filename cell array:
 frc_filename=cell(num_WAMIT_runs,1);
 
-for file_count=1:num_WAMIT_runs
-    string{08}=sprintf('\n%s\n%s%d%s\n\n',string{01},string{02}, ...
-        file_count,string{03});
-    frc_filename{file_count}=input(string{08},'s');
-    while length(frc_filename{file_count})>16
-        disp(' ');
-        frc_filename{file_count}=input(string{07},'s');
+% Gather list of files in `Model` folder
+dir_list = dir(fullfile('..','Models'));
+dir_list = {dir_list.name}';
+
+% Console display prompt
+fprintf('\n\nList of existing models at: %s\n\n',pwd)
+
+% List models within `Model` folder with unique ID (sequence number)
+model_list = cell(length(dir_list)-2,1);
+i = 0;
+for dir_entry = 1:length(dir_list)
+    if dir_list{dir_entry} ~= '.'
+        i = i + 1;
+        model_list{i} = dir_list{dir_entry};
+        fprintf('\t%d\t->\t%s\n',i,model_list{i});
     end
 end
+
+% Prompt user for selection of existig model
+
+for file_count=1:num_WAMIT_runs
+    model_id = input(sprintf('\nSelect index of model %d: ',file_count));
+    frc_filename{file_count} = model_list{model_id};
+end
+
 
 clear ('file_count','string')
 
@@ -1299,7 +1307,7 @@ end
 % Define full outpu `.mat` filename including path (excl extensions)
 td_model_filename = fullfile(td_model_path,model_name);
 
-Matrices_and_SS_file=strcat(td_model_filename,'_MassDampStiffMatsRadSS2', ...
+Matrices_and_SS_file=strcat(td_model_filename,'_MassDampStiffMatsRadSS', ...
     optional_extension,'.mat');
 save(Matrices_and_SS_file,'inv_reduced_mass_matrix', ...
                           'reduced_damping_matrix', ...
