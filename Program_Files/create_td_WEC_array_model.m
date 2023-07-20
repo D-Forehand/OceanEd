@@ -543,8 +543,8 @@ for file_count=1:num_WAMIT_runs
         elseif row_count==5
             non_inf_count=non_inf_count+1;
         else
-            error(['Wrong number of rows in',frc_filename{file_count}, ...
-                  '.1 file']);
+            error("Wrong number of rows in %s.1 file", ...
+                frc_filename{file_count});
         end
 
         s=fgetl(fid);%read the next line
@@ -1002,7 +1002,7 @@ for i_mode = 1:num_dofs
             modeflag=[i_mode j_mode 0];
             
             % For all approximating transfer function numerator orders up
-            % to maxN and all denominator orders up to the numerator order
+            % to maxN and all numerator orders up to the denominator order
             % minus one, search until a transfer function is found which is
             % stable and which has a relative root-mean-square error to the
             % radiation impedance function of less than fit_errormax:
