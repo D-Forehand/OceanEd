@@ -97,36 +97,27 @@ num_WAMIT_runs=input(string{05});
 clear ('string')
 
 %% INPUT THE NAMES OF THE WAMIT FRC FILES
-% Model selector implementation from local model library (`Model` folder)
+
+string{01}='Give  the  filename  of  the  WAMIT  FRC file';
+string{02}='number ';
+string{03}=', without the ".frc" extension:';
+string{04}='WAMIT  filenames   without   their  extension';
+string{05}='should  be  less  than  16  characters  long.';
+string{06}='Please re-enter the filename:';
+string{07}=sprintf('%s\n%s\n%s\n\n',string{04},string{05},string{06});
 
 % Initialising the frc_filename cell array:
-frc_filename=cell(num_WAMIT_runs,1);
-
-% Gather list of files in `Model` folder
-dir_list = dir(fullfile('..','Models'));
-dir_list = {dir_list.name}';
-
-% Console display prompt
-fprintf('\n\nList of existing models at: %s\n\n',pwd)
-
-% List models within `Model` folder with unique ID (sequence number)
-model_list = cell(length(dir_list)-2,1);
-i = 0;
-for dir_entry = 1:length(dir_list)
-    if dir_list{dir_entry} ~= '.'
-        i = i + 1;
-        model_list{i} = dir_list{dir_entry};
-        fprintf('\t%d\t->\t%s\n',i,model_list{i});
-    end
-end
-
-% Prompt user for selection of existig model
+frc_filename=cell(num_WAMIT_runs); 
 
 for file_count=1:num_WAMIT_runs
-    model_id = input(sprintf('\nSelect index of model %d: ',file_count));
-    frc_filename{file_count} = model_list{model_id};
+    string{08}=sprintf('\n%s\n%s%d%s\n\n',string{01},string{02}, ...
+        file_count,string{03});
+    frc_filename{file_count}=input(string{08},'s');
+    while length(frc_filename{file_count})>16
+        disp(' ');
+        frc_filename{file_count}=input(string{07},'s');
+    end
 end
-
 
 clear ('file_count','string')
 
@@ -156,20 +147,6 @@ while length(optional_extension)>16
 end
 
 clear ('string')
-
-%% AMEND `frc_filename`: ADD PATH TO DIRECTORY CONTAINING WAMIT OUT FILES
-
-% Store name of current model
-model_name = frc_filename{1};
-
-% Define full path to TD model output `.mat` created at end of this script
-td_model_path= fullfile("..",'Models',frc_filename{1},'out-td_model');
-
-% Add full path to `frc_filename` cell array
-for file_count=1:num_WAMIT_runs
-    frc_filename{file_count} = fullfile("..",'Models',...
-        frc_filename{file_count},'out',frc_filename{file_count});
-end
 
 %% EXTRACT g, L AND rho FROM THE FIRST WAMIT ".OUT" FILE
 
@@ -543,8 +520,8 @@ for file_count=1:num_WAMIT_runs
         elseif row_count==5
             non_inf_count=non_inf_count+1;
         else
-            error("Wrong number of rows in %s.1 file", ...
-                frc_filename{file_count});
+            error(['Wrong number of rows in',frc_filename{file_count}, ...
+                  '.1 file']);
         end
 
         s=fgetl(fid);%read the next line
@@ -717,7 +694,7 @@ clear('ij_mode','i_mode','j_mode','i_between_1_and_6', ...
 % mode_index(9) = 2.
 
 % Calculating the number of degrees of freedom (number of modes):
-num_dofs=length(unique(inf_data(:,2)));
+num_dofs=sqrt(size(inf_data,1));
 
 % Calculating the 'mode' row vector:
 mode=(inf_data(1:num_dofs:end,2))';
@@ -1002,7 +979,7 @@ for i_mode = 1:num_dofs
             modeflag=[i_mode j_mode 0];
             
             % For all approximating transfer function numerator orders up
-            % to maxN and all numerator orders up to the denominator order
+            % to maxN and all denominator orders up to the numerator order
             % minus one, search until a transfer function is found which is
             % stable and which has a relative root-mean-square error to the
             % radiation impedance function of less than fit_errormax:
@@ -1299,15 +1276,7 @@ reduced_stiffness_matrix=zeros(num_dofs,num_dofs);%Preallocating the array
 
 %% SAVING THE DATA FOR THE TIME-DOMAIN HYDRODYNAMIC ARRAY MODEL
 
-% Create new folder for TD model in model sub-directory-> `out_td_model`
-if isempty(dir(td_model_path))
-    mkdir(td_model_path)
-end
-
-% Define full outpu `.mat` filename including path (excl extensions)
-td_model_filename = fullfile(td_model_path,model_name);
-
-Matrices_and_SS_file=strcat(td_model_filename,'_MassDampStiffMatsRadSS', ...
+Matrices_and_SS_file=strcat(frc_filename{1},'_MassDampStiffMatsRadSS', ...
     optional_extension,'.mat');
 save(Matrices_and_SS_file,'inv_reduced_mass_matrix', ...
                           'reduced_damping_matrix', ...
